@@ -1,0 +1,26 @@
+server:
+  port: 8081
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/iam_db?serverTimeZone=UTC
+    username: root
+    password: 1234
+jwt:
+  # 设置jwt签名加密时使用的秘钥
+  secret-key: iamxushuo
+  # 设置jwt过期时间
+  ttl: 7200000
+  # 设置前端传递过来的令牌名称
+  token-name: iam_token
+redis:
+  host: localhost
+  port: 6379
+  database: 0
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-field: isDeleted  # 全局逻辑删除字段值
+      logic-delete-value: 1          # 逻辑已删除值(默认为1)
+      logic-not-delete-value: 0      # 逻辑未删除值(默认为0)
+      update-strategy: not_null  # 更新时忽略null值

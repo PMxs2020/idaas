@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.iam.mapper.ApplicationDao">
+    
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="org.iam.pojo.domain.Application">
+        <id column="id" property="id"/>
+        <result column="apply_uuid" property="applyUuid"/>
+        <result column="apply_name" property="applyName"/>
+        <result column="mode_id" property="modeId"/>
+        <result column="apply_icon" property="applyIcon"/>
+        <result column="background_image_url" property="backgroundImageUrl"/>
+        <result column="background_video_url" property="backgroundVideoUrl"/>
+        <result column="is_disabled" property="isDisabled"/>
+        <result column="redirect_url" property="redirectUrl"/>
+        <result column="logout_url" property="logoutUrl"/>
+        <result column="site_id" property="siteId"/>
+        <result column="token_validity" property="tokenValidity"/>
+        <result column="target_url" property="targetUrl"/>
+        <result column="request_method" property="requestMethod"/>
+        <result column="second_auth" property="secondAuth"/>
+        <result column="pattern_type" property="patternType"/>
+        <result column="show_system_name" property="showSystemName"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+    
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, apply_uuid, apply_name, mode_id, apply_icon, background_image_url, 
+        background_video_url, is_disabled, redirect_url, logout_url, site_id, 
+        token_validity, target_url, request_method, second_auth, pattern_type, 
+        show_system_name, is_deleted, create_time, update_time
+    </sql>
+    
+    <!-- 批量查询应用 -->
+    <select id="batchSelectByApplyUuids" resultMap="BaseResultMap">
+        SELECT 
+        <include refid="Base_Column_List"/>
+        FROM application 
+        WHERE apply_uuid IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND is_deleted = 0
+        ORDER BY FIELD(apply_uuid,
+        <foreach collection="ids" item="id" separator=",">
+            #{id}
+        </foreach>
+        )
+    </select>
+    
+    <!-- 批量删除应用（逻辑删除） -->
+    <update id="batchDeleteByApplyUuids">
+        UPDATE application 
+        SET is_deleted = 1,
+            update_time = NOW()
+        WHERE apply_uuid IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND is_deleted = 0
+    </update>
+    
+</mapper> 
