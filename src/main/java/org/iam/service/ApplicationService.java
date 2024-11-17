@@ -11,7 +11,6 @@ import java.util.List;
  * 应用服务接口
  */
 public interface ApplicationService {
-    
     /**
      * 根据id查询应用信息
      * @param appId 应用ID
@@ -23,16 +22,21 @@ public interface ApplicationService {
      * @param application 应用信息
      */
     void saveApplication(Application application) throws NoSuchAlgorithmException;
-
     /**
      * 批量删除应用
-     *
      * @param ids
      * @return
      */
     int deleteApplications(List<String> ids);
-
+    /**
+     * 更新应用
+     * @param application
+     */
     void updateApplication(Application application);
-
+    /**
+     * 应用分页查询
+     * @param applicationQueryDTO
+     * @return
+     */
     ApplicationPageVO getApplicationList(ApplicationQueryDTO applicationQueryDTO);
 }

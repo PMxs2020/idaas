@@ -23,6 +23,7 @@ public class JwtUtil {
         JwtBuilder builder = Jwts.builder()
                 .setSubject(user.getAccount())
                 .setId(String.valueOf(user.getId()))
+                .claim("uuid",user.getUserUuid())
                 .setIssuedAt(new Date(now))
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, jwtProperties.getSecretKey());

@@ -148,14 +148,14 @@ public class Application {
      * 创建人 iam_user表id
      */
     @TableField("create_user_id")
-    private Long createUserId;
+    private String createUserId;
 
 
     /**
      * 最后更新人 iam_user表id
      */
     @TableField("update_user_id")
-    private Long updateUserId;
+    private String updateUserId;
 
 
     /**

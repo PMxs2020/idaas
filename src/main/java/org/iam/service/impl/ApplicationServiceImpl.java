@@ -173,17 +173,19 @@ public class ApplicationServiceImpl implements ApplicationService {
         try {
             // 构建查询条件
             LambdaQueryWrapper<Application> queryWrapper = new LambdaQueryWrapper<>();
-
+            // 应用uuid精确查询
+            if (StringUtils.hasText(applicationQueryDTO.getApplyUuid())) {
+                queryWrapper.eq(Application::getApplyUuid, applicationQueryDTO.getApplyUuid());
+            }
             // 应用名称模糊查询
             if (StringUtils.hasText(applicationQueryDTO.getApplyName())) {
                 queryWrapper.like(Application::getApplyName, applicationQueryDTO.getApplyName());
             }
 
             // 创建人uuid匹配
-            if (StringUtils.hasText(applicationQueryDTO.getApplyUuid())) {
-                queryWrapper.eq(Application::getApplyUuid, applicationQueryDTO.getApplyUuid());
+            if (StringUtils.hasText(applicationQueryDTO.getCreateUserId())) {
+                queryWrapper.eq(Application::getCreateUserId, applicationQueryDTO.getCreateUserId());
             }
-
             // 应用类型
             if (!CollectionUtils.isEmpty(applicationQueryDTO.getApplyTypeId())) {
                 queryWrapper.and(wrapper -> {
@@ -193,8 +195,8 @@ public class ApplicationServiceImpl implements ApplicationService {
                 });
             }
             // 启用状态
-            if (applicationQueryDTO.getStatus() != null) {
-                queryWrapper.eq(Application::getIsDisabled, applicationQueryDTO.getStatus());
+            if (applicationQueryDTO.getIsDisabled() != null) {
+                queryWrapper.eq(Application::getIsDisabled, applicationQueryDTO.getIsDisabled());
             }
 
             // 创建时间范围

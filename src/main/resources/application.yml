@@ -24,3 +24,5 @@ mybatis-plus:
       logic-delete-value: 1          # 逻辑已删除值(默认为1)
       logic-not-delete-value: 0      # 逻辑未删除值(默认为0)
       update-strategy: not_null  # 更新时忽略null值
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

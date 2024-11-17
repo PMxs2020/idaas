@@ -35,8 +35,8 @@ public class LoginInterceptor implements HandlerInterceptor {
                     .setSigningKey(jwtProperties.getSecretKey())
                     .parseClaimsJws(token)
                     .getBody();
-            String jti = claims.get("jti", String.class);
-            BaseContext.setCurrentId(Long.valueOf(jti));
+            String uuid = claims.get("uuid", String.class);
+            BaseContext.setCurrentId(uuid);
 //            // 检查用户是否为系统用户
 //            String userType = claims.get("userType", String.class); // 假设你在 token 中存储了用户类型
 //            if (!"system_user".equals(userType)) {

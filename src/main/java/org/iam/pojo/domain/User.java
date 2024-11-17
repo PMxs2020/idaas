@@ -52,10 +52,10 @@ public class User {
     private String bindIp;
 
     @TableField("create_user_id")
-    private Long createUserId;
+    private String createUserId;
 
     @TableField("update_user_id")
-    private Long updateUserId;
+    private String updateUserId;
 
     @TableField("user_uuid")
     private String userUuid;
