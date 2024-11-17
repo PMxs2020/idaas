@@ -11,11 +11,9 @@ import org.iam.exception.BaseException;
 import org.iam.mapper.ApplicationDao;
 import org.iam.pojo.domain.Application;
 import org.iam.pojo.domain.KeyAddress;
-import org.iam.pojo.domain.User;
 import org.iam.pojo.dto.ApplicationQueryDTO;
 import org.iam.pojo.vo.ApplicationPageVO;
 import org.iam.pojo.vo.ApplicationVO;
-import org.iam.pojo.vo.UserVO;
 import org.iam.service.ApplicationService;
 import org.iam.util.SafeKeyUtil;
 import org.springframework.beans.BeanUtils;
@@ -48,8 +46,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     /**
      * 根据应用ID查询应用信息
-     * @param id 应用ID
-     * @return
+     * @param id 应用UUID
      */
     @Override
     public Application getApplicationById(String id) {
@@ -97,7 +94,6 @@ public class ApplicationServiceImpl implements ApplicationService {
      * 删除应用（支持单个和批量）
      *
      * @param ids 应用ID列表
-     * @return
      */
     @Override
     @Transactional(rollbackFor = Exception.class)

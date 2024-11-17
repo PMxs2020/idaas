@@ -4,10 +4,7 @@ import com.baomidou.mybatisplus.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
 import java.time.LocalDateTime;
-import java.util.List;
-
 /**
  * 应用管理实体类
  */

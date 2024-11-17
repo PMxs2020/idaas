@@ -22,6 +22,7 @@ public interface ApplicationService {
      * @param application 应用信息
      */
     void saveApplication(Application application) throws NoSuchAlgorithmException;
+
     /**
      * 批量删除应用
      * @param ids

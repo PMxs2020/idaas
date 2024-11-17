@@ -11,7 +11,6 @@ import org.iam.constant.AutoFillConstant;
 import org.iam.context.BaseContext;
 import org.iam.enumeration.OperationType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
@@ -29,7 +28,7 @@ public class AutoFillAspect {
     @Pointcut("execution(* org.iam.service.*.*.*(..)) && @annotation(org.iam.annotation.AutoFill)")//Service层的方法并且加入了AutoFill注解的部分
     public void atuoFillPointCut(){}
     @Before("atuoFillPointCut()")
-    public void autoFill(JoinPoint joinPoint) throws NoSuchMethodException {
+    public void autoFill(JoinPoint joinPoint)  {
         log.info("开始进行公共字段自动填充");
         //获取AutoFill注解中的数据库操作类型
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
@@ -54,7 +53,7 @@ public class AutoFillAspect {
                 setUpdateTime.invoke(entity,now);
                 setUpdateUser.invoke(entity,currentId);
             }catch (Exception e){
-                e.printStackTrace();
+                log.info("数据更新操作填充失败，{}",e.getMessage(),e);
             }
 
         }else if(operationType== OperationType.INSERT){
@@ -70,7 +69,7 @@ public class AutoFillAspect {
                 setCreateUser.invoke(entity,currentId);
                 setUpdateUser.invoke(entity,currentId);
             }catch (Exception e){
-                e.printStackTrace();
+                log.info("数据插入操作填充失败，{}",e.getMessage(),e);
             }
         }
 
