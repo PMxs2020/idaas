@@ -1,19 +1,17 @@
 package org.iam.interceptor;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.iam.context.BaseContext;
 import org.iam.properties.JwtProperties;
-import org.iam.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 
+@Slf4j
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
 
@@ -46,7 +44,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 //            }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("失败: {}", e.getMessage(), e);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("无效token");
             return false;
