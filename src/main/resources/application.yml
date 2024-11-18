@@ -6,9 +6,6 @@ spring:
     url: jdbc:mysql://localhost:3306/iam_db?serverTimeZone=UTC
     username: root
     password: 1234
-  jackson:
-    date-format: yyyy-MM-dd HH:mm:ss   # 输出格式为：2024-11-18 00:29:52
-    time-zone: GMT+8                    # 确保时间显示为中国标准时间
 jwt:
   # 设置jwt签名加密时使用的秘钥
   secret-key: iamxushuo

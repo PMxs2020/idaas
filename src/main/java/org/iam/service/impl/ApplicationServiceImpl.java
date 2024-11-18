@@ -69,7 +69,12 @@ public class ApplicationServiceImpl implements ApplicationService {
         // 查询其他应用
         LambdaQueryWrapper<Application> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Application::getApplyUuid, id);
-        return applicationDao.selectOne(queryWrapper);
+        //判断应用是否查询到
+        Application application=applicationDao.selectOne(queryWrapper);
+        if(application==null){
+            throw new ApplicationNotExistException("查询的应用不存在");
+        }
+        return application;
     }
 
     @Override
@@ -117,7 +122,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             return deleteCount;
         } catch (Exception e) {
             log.error("删除应用失败，ids：{}", ids, e);
-            throw new BaseException("删除应用失败：" + e.getMessage());
+            throw e;
         }
     }
     /**

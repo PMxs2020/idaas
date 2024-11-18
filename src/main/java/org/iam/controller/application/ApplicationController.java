@@ -53,7 +53,7 @@ public class ApplicationController {
      * @return
      */
     @DeleteMapping
-    public Result deleteApplication(@RequestBody List<String> ids){
+    public Result deleteApplication(@RequestParam List<String> ids){
         log.info("删除应用，ids：{}", ids);
         int deleteCount=applicationService.deleteApplications(ids);
         return Result.ok().message("应用已删除");

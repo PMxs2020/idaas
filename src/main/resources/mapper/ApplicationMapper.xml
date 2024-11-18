@@ -38,7 +38,7 @@
     <select id="batchSelectByApplyUuids" resultMap="BaseResultMap">
         SELECT 
         <include refid="Base_Column_List"/>
-        FROM application 
+        FROM iam_apply
         WHERE apply_uuid IN
         <foreach collection="ids" item="id" open="(" separator="," close=")">
             #{id}
@@ -53,7 +53,7 @@
     
     <!-- 批量删除应用（逻辑删除） -->
     <update id="batchDeleteByApplyUuids">
-        UPDATE application 
+        UPDATE iam_apply
         SET is_deleted = 1,
             update_time = NOW()
         WHERE apply_uuid IN
