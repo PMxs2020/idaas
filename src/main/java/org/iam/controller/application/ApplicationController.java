@@ -36,7 +36,7 @@ public class ApplicationController {
      * @throws NoSuchAlgorithmException
      */
     @PostMapping
-    public Result addApplication(@Validated(ValidationGroups.Add.class)  @RequestBody ApplicationDTO applicationDTO) throws NoSuchAlgorithmException {
+    public Result addApplication(@Validated(ValidationGroups.Add.class)  @RequestBody @Valid ApplicationDTO applicationDTO) throws NoSuchAlgorithmException {
         // 处理文件上传并保存到服务器
         // 保存应用信息
         Application application=new Application();
@@ -74,10 +74,11 @@ public class ApplicationController {
      * @return
      */
     @PutMapping
-    public Result saveApplication(@RequestBody @Validated(ValidationGroups.Update.class) ApplicationDTO applicationDTO) {
+    public Result saveApplication(@Validated(ValidationGroups.Update.class) @RequestBody @Valid ApplicationDTO applicationDTO) {
         Application application = new Application();
         // 将 applicationDTO 的属性赋值给 application
         BeanUtils.copyProperties(applicationDTO, application);
+        application.setApplyTypeId(ListStringConverter.listToString(applicationDTO.getApplyTypeId()));
         applicationService.updateApplication(application);
         return Result.ok().message("应用更新成功");
     }

@@ -15,7 +15,11 @@ import java.util.Objects;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
-
+    /**
+     * 捕捉参数验证异常
+     * @param ex
+     * @return
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Result handleValidationExceptions(MethodArgumentNotValidException ex) {
         log.error("异常信息：{}", ex.getMessage());

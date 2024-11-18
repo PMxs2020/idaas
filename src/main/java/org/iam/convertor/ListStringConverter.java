@@ -13,8 +13,11 @@ public class ListStringConverter {
 
     // List转字符串
     public static String listToString(List<Long> list) {
-        if (list == null || list.isEmpty()) {
+        if (list == null) {
             return null;
+        }
+        if (list.isEmpty()) {
+            return "";
         }
         return list.stream()
                 .map(String::valueOf)

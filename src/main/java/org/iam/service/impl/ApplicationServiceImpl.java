@@ -1,6 +1,8 @@
 package org.iam.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.iam.annotation.AutoFill;
@@ -148,15 +150,15 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (application == null || application.getApplyUuid() == null) {
             throw new IdNullException("应用ID不能为空");
         }
-        
         // 检查应用是否存在
         Application existingApp = getApplicationById(application.getApplyUuid());
         if (existingApp == null) {
             throw new ApplicationNotExistException("应用不存在");
         }
-
         try {
-            applicationDao.updateById(application);
+            UpdateWrapper<Application> wrapper=new UpdateWrapper<>();
+            wrapper.eq("apply_uuid", application.getApplyUuid());
+            applicationDao.update(application,wrapper);
             log.info("更新应用成功，id：{}", application.getApplyUuid());
         } catch (Exception e) {
             log.error("更新应用失败，id：{}", application.getApplyUuid(), e);

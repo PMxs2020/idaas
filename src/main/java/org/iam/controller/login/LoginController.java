@@ -1,9 +1,7 @@
 package org.iam.controller.login;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.iam.pojo.domain.Application;
 import org.iam.pojo.domain.User;
-import org.iam.mapper.UserDao;
 import org.iam.pojo.dto.LoginRequestDTO;
 import org.iam.properties.JwtProperties;
 import org.iam.service.UserService;
