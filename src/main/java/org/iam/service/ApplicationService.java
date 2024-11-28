@@ -3,6 +3,7 @@ package org.iam.service;
 import org.iam.pojo.domain.Application;
 import org.iam.pojo.dto.ApplicationQueryDTO;
 import org.iam.pojo.vo.ApplicationPageVO;
+import org.iam.pojo.vo.LoginSettingVO;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -40,4 +41,8 @@ public interface ApplicationService {
      * @return
      */
     ApplicationPageVO getApplicationList(ApplicationQueryDTO applicationQueryDTO);
+
+    boolean isTrirdPartyApply(String id);
+
+    LoginSettingVO getLoginSetting(String appId);
 }

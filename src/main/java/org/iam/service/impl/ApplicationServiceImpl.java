@@ -16,6 +16,7 @@ import org.iam.pojo.domain.KeyAddress;
 import org.iam.pojo.dto.ApplicationQueryDTO;
 import org.iam.pojo.vo.ApplicationPageVO;
 import org.iam.pojo.vo.ApplicationVO;
+import org.iam.pojo.vo.LoginSettingVO;
 import org.iam.service.ApplicationService;
 import org.iam.util.SafeKeyUtil;
 import org.springframework.beans.BeanUtils;
@@ -132,8 +133,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         Application app = new Application();
         app.setApplyUuid(ApplicationConstant.CONSOLE_APP_UUID);
         app.setApplyName("控制台应用");
-        String serverUrl = "http://localhost:8081/console";
-        app.setRedirectUrl(serverUrl);
         return app;
     }
     
@@ -144,8 +143,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         Application app = new Application();
         app.setApplyUuid(ApplicationConstant.USER_CENTER_APP_UUID);
         app.setApplyName("用户中心应用");
-        String serverUrl = "http://localhost:8081/usercenter";
-        app.setRedirectUrl(serverUrl);
         return app;
     }
 
@@ -232,5 +229,28 @@ public class ApplicationServiceImpl implements ApplicationService {
             log.error("查询应用列表失败", e);
             throw new BaseException("查询应用列表失败：" + e.getMessage());
         }
+    }
+
+    /**
+     * 判断是否是第三方应用
+     * @param id
+     * @return
+     */
+    @Override
+    public boolean isTrirdPartyApply(String id) {
+        if (id == null) {
+            throw new IdNullException();
+        }
+        return !(ApplicationConstant.CONSOLE_APP_UUID.equals(id)||ApplicationConstant.USER_CENTER_APP_UUID.equals(id));
+    }
+
+    @Override
+    public LoginSettingVO getLoginSetting(String appId) {
+        //判断应用id是否存在
+        if(appId==null){
+            throw new IdNullException();
+        }
+        //判断
+        return null;
     }
 } 
