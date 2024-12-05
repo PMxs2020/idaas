@@ -28,9 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * 应用服务实现类
@@ -61,7 +59,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (ApplicationConstant.CONSOLE_APP_UUID.equals(id)) {
             return buildConsoleApplication();
         }
-        
+
         // 判断是否是用户中心应用
         if (ApplicationConstant.USER_CENTER_APP_UUID.equals(id)) {
             return buildUserCenterApplication();
@@ -246,11 +244,17 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public LoginSettingVO getLoginSetting(String appId) {
-        //判断应用id是否存在
         if(appId==null){
             throw new IdNullException();
         }
-        //判断
-        return null;
+        LambdaQueryWrapper<Application> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Application::getApplyUuid, appId);
+        Application application = applicationDao.selectOne(queryWrapper);
+        if(application==null){
+            throw new ApplicationNotExistException("查询的应用不存在");
+        }
+        LoginSettingVO loginSettingVO = new LoginSettingVO();
+        BeanUtils.copyProperties(application, loginSettingVO);
+        return loginSettingVO;
     }
 } 

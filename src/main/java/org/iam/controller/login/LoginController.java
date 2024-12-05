@@ -1,5 +1,6 @@
 package org.iam.controller.login;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.iam.constant.LoginConstant;
 import org.iam.pojo.domain.Application;
 import org.iam.pojo.domain.User;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import jakarta.validation.Valid;
 import org.iam.service.ApplicationService;
@@ -33,22 +35,24 @@ public class LoginController {
     private UserService userService;
 
     @Autowired
-    private JwtUtil jwtUtil;   // 注入 JwtUtil
-
-    @Autowired
-    private RedisTemplate redisTemplate;
-
-    @Autowired
-    private JwtProperties jwtProperties;
-
-    @Autowired
     private ApplicationService applicationService;
 
     @Autowired
     private SessionService sessionService;
 
     @PostMapping("/login")
-    public Result login(@Valid @RequestBody LoginRequestDTO loginRequestDTO)  {
+    public Result login(@Valid @RequestBody LoginRequestDTO loginRequestDTO,HttpServletRequest request)  {
+        // 获取请求的IP地址
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
         // 检查应用UUID是否存在
         Application application = applicationService.getApplicationById(loginRequestDTO.getAppId());
         if (application == null) {
@@ -64,10 +68,10 @@ public class LoginController {
         //都通过后，将token加入到redis中，将并且返回用户token
         //创建会话，返回iam_token和apply_token,iam_token由前端存储，apply_token转给第三方应用
         //新增用户会话，生成iamToken和applyToken
-        String iamToken=sessionService.createIamSession(user.getUserUuid());
+        String iamToken=sessionService.createIamSession(user.getUserUuid(),ip);
         String applyToken=null;
         if(applicationService.isTrirdPartyApply(application.getApplyUuid())){
-            applyToken=sessionService.createThirdPartySession(user.getUserUuid(),application);
+            applyToken=sessionService.createThirdPartySession(iamToken,user.getUserUuid(),application);
         }
         //返回登录成功结果
         LoginSuccessVO loginSuccessVO= LoginSuccessVO.builder().
@@ -78,13 +82,41 @@ public class LoginController {
                 target_url(application.getTargetUrl()).build();
         return Result.ok().data("login", loginSuccessVO);
     }
+
+    /**
+     *前端传递iamToken,系统销毁主会话以及应用会话（相当于在控制台或者用户中心退出）
+     *应用处单点登出，先让其清除当前的session,然后跳转到iam的退出登录链接应用此时会清楚iam主会话，主会话的清除会先把各个应用的登出页面通过http的方式请求一遍，然后再把主会话清除
+     * @param iamToken
+     * @return
+     */
+    @PostMapping("/logout")
     public Result logout(@RequestHeader("${jwt.token-name}") String iamToken) {
-        //Redis清除token
-        redisTemplate.delete(iamToken);
-        //记录日志到数据库中
-        return Result.ok().message("用户注销成功");
+        //验证token是否存在
+        if (iamToken == null || iamToken.trim().isEmpty()) {
+            return Result.error().message("无token传入");
+        }
+        sessionService.deleteIamSession(iamToken);
+        return Result.ok().message("用户登出成功");
     }
-    @GetMapping
+    @PostMapping("/applyLogout")
+    public Result applyLogout(@RequestHeader("${jwt.token-name}") String iamToken,@RequestBody String applyUuid) {
+        //验证token是否存在
+        if (iamToken == null || iamToken.trim().isEmpty()) {
+            return Result.error().message("无token传入");
+        }
+        //删除主会话下的属于该应用的应用会话
+        sessionService.deleteThirdPartySession(iamToken,applyUuid);
+        //删除主会话（后续会实现单应用退出，所以将删除应用会话与删除主会话会分离
+        sessionService.deleteIamSession(iamToken);
+        return Result.ok().message("用户登出成功");
+    }
+    /**
+     * 查询应用登录信息
+     * @param appId
+     * @return
+     */
+
+    @GetMapping("/loginSetting")
     public Result loginSetting(String appId){
       LoginSettingVO loginSettingVO=applicationService.getLoginSetting(appId);
       return Result.ok().data("loginSetting", loginSettingVO);

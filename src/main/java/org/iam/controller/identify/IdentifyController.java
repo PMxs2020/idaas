@@ -37,14 +37,13 @@ public class IdentifyController {
         //验证token是否有效
         Claims claims=jwtUtil.validateIamToken(iamToken);
         // 验证token是否在Redis中存在
-        String redisToken = redisTemplate.opsForValue().get(iamToken);
-        if (redisToken == null) {
+        if(Boolean.FALSE.equals(redisTemplate.hasKey("iam_token:" + iamToken))){
             return Result.error().message("无效token");
         }
-        //新增第三方用户会话，生成应用token
-        String applyToken=sessionService.createThirdPartySession(claims.get("uuid",String.class),application);
-        //iam_token续期生成新的iamtoken
+        //iam_token续期生成新的iamToken
         String newIamToken=sessionService.renewalSession(iamToken);
+        //新增第三方用户会话，生成应用token
+        String applyToken=sessionService.createThirdPartySession(newIamToken,claims.get("uuid",String.class),application);
         //返回认证成功结果
         LoginSuccessVO loginSuccessVO= LoginSuccessVO.builder().
                 loginType(LoginConstant.THIRD_PARTY_APPLICATION).
