@@ -7,19 +7,12 @@ import org.iam.pojo.domain.User;
 import org.iam.pojo.dto.LoginRequestDTO;
 import org.iam.pojo.vo.LoginSettingVO;
 import org.iam.pojo.vo.LoginSuccessVO;
-import org.iam.properties.JwtProperties;
 import org.iam.service.SessionService;
 import org.iam.service.UserService;
-import org.iam.util.JwtUtil;
 import org.iam.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import jakarta.validation.Valid;
 import org.iam.service.ApplicationService;
 
@@ -84,8 +77,7 @@ public class LoginController {
     }
 
     /**
-     *前端传递iamToken,系统销毁主会话以及应用会话（相当于在控制台或者用户中心退出）
-     *应用处单点登出，先让其清除当前的session,然后跳转到iam的退出登录链接应用此时会清楚iam主会话，主会话的清除会先把各个应用的登出页面通过http的方式请求一遍，然后再把主会话清除
+     * 在用户中心退出或在控制台退出
      * @param iamToken
      * @return
      */
@@ -98,7 +90,7 @@ public class LoginController {
         sessionService.deleteIamSession(iamToken);
         return Result.ok().message("用户登出成功");
     }
-    @PostMapping("/applyLogout")
+    @PostMapping("/applylogout")
     public Result applyLogout(@RequestHeader("${jwt.token-name}") String iamToken,@RequestBody String applyUuid) {
         //验证token是否存在
         if (iamToken == null || iamToken.trim().isEmpty()) {
@@ -112,10 +104,7 @@ public class LoginController {
     }
     /**
      * 查询应用登录信息
-     * @param appId
-     * @return
      */
-
     @GetMapping("/loginSetting")
     public Result loginSetting(String appId){
       LoginSettingVO loginSettingVO=applicationService.getLoginSetting(appId);

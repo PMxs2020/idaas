@@ -1,6 +1,9 @@
 package org.iam.service;
 
 import org.iam.pojo.domain.Application;
+import org.iam.pojo.dto.SessionQueryDTO;
+import org.iam.pojo.vo.ApplicationPageVO;
+import org.iam.pojo.vo.SessionPageVO;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -41,4 +44,6 @@ public interface SessionService {
      * @param applyToken
      */
     void deleteThirdPartySession(String applyToken,String applyUuid);
+
+    SessionPageVO getSessionList(SessionQueryDTO sessionQueryDTO);
 }
